@@ -13,12 +13,12 @@ def generate_poem_response(poem_data):
     for obj in poem_data:
         cleaned_data = {key: clean_text(value) if isinstance(value, str) else value for key, value in obj["_source"].items()}
         response_string += '\n'.join([f'{key}: {value}' for key, value in cleaned_data.items()])
-        response_string += "\n_______________________________________________________________\n"
+        response_string += "\n______________________________________________________________________________\n"
     return response_string
 
-def random_response(key,data):
-    print(key,data)
-    res=match_query(es,key,data)
+def random_response(key,fuzzy,data):
+    print(key,fuzzy,data)
+    res=match_query(es,key,data,fuzzy)
     return generate_poem_response((res["hits"])["hits"])
 
 
@@ -27,6 +27,9 @@ iface = gr.Interface(
     inputs=[
         gr.Dropdown(
             ["poem_name", "poet", "line","Metaphor_in_English","Metaphor meaning in English" , "Year" ], label="Keys", 
+        ),
+        gr.Dropdown(
+            [True,False], label="Fuzzy", 
         ),
         gr.inputs.Textbox(lines=2, label="value"),
     ], 

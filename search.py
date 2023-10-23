@@ -1,16 +1,5 @@
-# from datetime import datetime
-# from elasticsearch import Elasticsearch
-# es = Elasticsearch([{'host': 'localhost', 'port': 9200, "scheme": "http"}])
+def match_query(connection, field, value,fuzzy=False):
 
-
-# resp = es.get(index="poems",id="CE6OUYsBcJOyq73a64aL")
-# print(resp)
-
-# def get_poem(connection,id):
-#     resp = connection.get(index="poems",id=id)
-#     return resp
-
-def match_query(connection,field, value):
     query = {
         "query": {
             "match": {
@@ -18,6 +7,25 @@ def match_query(connection,field, value):
             }
         }
     }
+    
+    if fuzzy:
+
+        query = {
+            "query": {
+                "bool": {
+                    "must": {
+                        "match": {
+                            field: {
+                                "query": value,
+                                "fuzziness": "AUTO"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    
     resp = connection.search(index="poems", body=query)
-    print("=======================",resp)
+    print("=======================", resp)
     return resp
+
